@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Main Page</h1>
+    <h2>Image Display</h2>
+
+    <input type="button" onclick="makeQRCode()" value="Generate QR Code" />
+    <input type="number" id="userId" />
+
+    <div id="qrCodeContainer"></div>
+</body>
+
+<script>
+    async function makeQRCode() {
+        const userId = document.getElementById("userId").value;
+        console.log("userId: ", userId);
+        try {
+            const response = await fetch(`http://localhost:8080/create_qr?userId=${userId}`);
+
+            // 이미지 데이터를 바로 받음
+            const imageBlob = await response.blob();
+
+            // Blob URL 생성
+            const imageUrl = URL.createObjectURL(imageBlob);
+
+            // 이미지를 HTML에 추가
+            const imgElement = document.createElement('img');
+            imgElement.src = imageUrl;
+
+            // 이미지를 표시할 곳에 추가
+            const qrCodeContainer = document.getElementById('qrCodeContainer');
+            qrCodeContainer.innerHTML = ''; // 이미지를 표시할 곳 초기화
+            qrCodeContainer.appendChild(imgElement);
+
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+</script>
+</html>
